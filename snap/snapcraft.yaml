@@ -44,7 +44,7 @@ parts:
       - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
     meson-parameters:
       - --prefix=/snap/symbolic-preview/current/usr
-    parse-info: [usr/share/metainfo/org.gnome.design.SymbolicPreview.metainfo.xml]
+    parse-info: [usr/share/metainfo/org.gnome.design.SymbolicPreview.appdata.xml]
     override-pull: |
       craftctl default
       patch -p1 < $CRAFT_PROJECT_DIR/symbolic-preview.patch  
