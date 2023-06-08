@@ -1,0 +1,67 @@
+name: symbolic-preview # you probably want to 'snapcraft register <name>'
+base: core22 # the base snap is the execution environment for this snap
+adopt-info: symbolic-preview
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+architectures:
+  - build-on: amd64
+  - build-on: armhf
+  - build-on: arm64
+
+slots:
+  symbolic-library:
+    interface: dbus
+    bus: session
+    name: org.gnome.design.SymbolicPreview
+parts:
+  rustup:
+    plugin: nil
+    build-packages: [wget]
+    build-environment:
+      - RUSTUP_HOME: $CRAFT_PART_INSTALL/usr/share/rust
+      - CARGO_HOME: $CRAFT_PART_INSTALL/usr/share/rust
+      - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
+    override-pull: |
+      wget https://sh.rustup.rs -O $CRAFT_PART_SRC/rustup-init.sh
+      chmod +x $CRAFT_PART_SRC/rustup-init.sh
+    override-build: |
+      $CRAFT_PART_SRC/rustup-init.sh -y --no-modify-path
+      mkdir -p $CRAFT_PART_INSTALL/usr/bin
+      for i in `ls $RUSTUP_HOME/bin/`; do
+        ln -s ../share/rust/bin/$i $CRAFT_PART_INSTALL/usr/bin/$i
+      done
+    override-prime: |
+      echo 'Skip Prime'
+  symbolic-preview:
+    after: [rustup]
+    # See 'snapcraft plugins'
+    plugin: meson
+    source: https://gitlab.gnome.org/World/design/symbolic-preview.git
+    source-tag: '0.0.8'
+    build-environment:
+      - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
+      - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
+      - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
+    meson-parameters:
+      - --prefix=/snap/symbolic-preview/current/usr
+    parse-info: [usr/share/metainfo/org.gnome.design.SymbolicPreview.metainfo.xml]
+    override-pull: |
+      craftctl default
+      patch -p1 < $CRAFT_PROJECT_DIR/symbolic-preview.patch  
+    override-build: |
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/meta/gui
+      cp -r $CRAFT_PART_INSTALL/snap/symbolic-preview/current/usr/share/icons $CRAFT_PART_INSTALL/meta/gui/
+      find $CRAFT_PART_INSTALL/meta/gui/icons -type f -not -name 'org.gnome.design.SymbolicPreview*' -exec rm {} + -o -type d -empty -exec rmdir {} +
+      for i in `find $CRAFT_PART_INSTALL/meta/gui/icons -name "*.svg" -o -name "*.png"`; do
+        mv $i "`dirname $i`/snap.$CRAFT_PROJECT_NAME.`basename $i`"
+      done
+    organize:
+      snap/symbolic-preview/current: .
+
+
+apps:
+  symbolic-preview:
+    command: usr/bin/symbolic-preview
+    extensions: [gnome]
+    common-id: org.gnome.design.SymbolicPreview

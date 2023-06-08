@@ -1,0 +1,23 @@
+diff -Naur a/data/org.gnome.design.SymbolicPreview.desktop.in.in b/data/org.gnome.design.SymbolicPreview.desktop.in.in
+--- a/data/org.gnome.design.SymbolicPreview.desktop.in.in	2023-06-08 23:01:41.006326586 +0530
++++ b/data/org.gnome.design.SymbolicPreview.desktop.in.in	2023-06-08 23:03:15.094598413 +0530
+@@ -7,7 +7,7 @@
+ Categories=GNOME;GTK;Utility;
+ Keywords=Gnome;GTK;Symbolics;Icon;
+ # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+-Icon=@icon@
++Icon=snap.symbolic-preview.@icon@
+ StartupNotify=true
+ MimeType=image/svg+xml;
+ 
+diff -Naur a/data/org.gnome.design.SymbolicPreview.metainfo.xml.in.in b/data/org.gnome.design.SymbolicPreview.metainfo.xml.in.in
+--- a/data/org.gnome.design.SymbolicPreview.metainfo.xml.in.in	2023-06-08 23:02:07.114391570 +0530
++++ b/data/org.gnome.design.SymbolicPreview.metainfo.xml.in.in	2023-06-08 23:03:38.598681647 +0530
+@@ -2,6 +2,7 @@
+ <!-- Bilal Elmoussaoui 2019 <bilal.elmoussaoui@gnome.org> -->
+ <component type="desktop-application">
+   <id>@app-id@</id>
++  	<icon type="stock">snap.symbolic-preview.@app-id@</icon>
+   <metadata_license>CC0</metadata_license>
+   <project_license>GPL-3.0+</project_license>
+   <name>Symbolic Preview</name>
