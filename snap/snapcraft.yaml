@@ -38,6 +38,7 @@ parts:
     plugin: meson
     source: https://gitlab.gnome.org/World/design/symbolic-preview.git
     source-tag: '0.0.8'
+    source-depth: 1
     build-environment:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
